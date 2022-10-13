@@ -42,6 +42,10 @@ class MultiModel():
         self.log_reg_path = os.path.join(self.project_path, "log_reg.sav")
         self.rand_forest_path = os.path.join(
             self.project_path, "rand_forest.sav")
+        self.knn_path = os.path.join(self.project_path, "knn.sav")
+        self.tree_path = os.path.join(self.project_path, "tree.sav")
+        self.svm_path = os.path.join(self.project_path, "svm.sav")
+        self.bayes_path = os.path.join(self.project_path, "bayes.sav")
         self.log.info("MultiModel is ready")
 
     def log_reg(self, predict=False) -> bool:
@@ -56,11 +60,88 @@ class MultiModel():
         params = {'path':self.log_reg_path}
         return self.save_model(classifier, self.log_reg_path, "LOG_REG", params)
 
-    def rand_forest(self, n_trees=100, criterion="entropy", predict=False) -> bool:
+    def bayes(self,predict=False):
+        classifier = GaussianNB()
+        try:
+            classifier.fit(self.X_train, self.y_train)
+        except Exception:
+            self.log.error(traceback.format_exc())
+            sys.exit(1)
+        if predict:
+            y_pred = classifier.predict(self.X_test)
+            print("the score of bayes is", accuracy_score(self.y_test, y_pred))
+        params = {'path': self.bayes_path}
+        return  self.save_model(classifier, self.bayes_path, "BAYES", params)
+
+    def tree(self, max_depth=10, criterion="entropy",predict=False):
+        classifier = DecisionTreeClassifier(max_depth=max_depth, criterion=criterion)
+        try:
+            classifier.fit(self.X_train, self.y_train)
+        except Exception:
+            self.log.error(traceback.format_exc())
+            sys.exit(1)
+        if predict:
+            y_pred = classifier.predict(self.X_test)
+            print("the score of DecionTree", accuracy_score(self.y_test, y_pred))
+        params = {'criterion':criterion,
+                  'max_depth':max_depth, 'path': self.tree_path}
+        return self.save_model(classifier, self.tree_path, "TREE", params)
+
+    def svm(self, use_config:bool,kernel="linear",random_state=0, predict=False) -> bool:
+        if use_config:
+            try:
+                classifier = SVC(kernel=self.config["SVM"]["kernel"], random_state=self.config.getint(
+                    "SVC", "random_state"))
+            except KeyError:
+                self.log.error(traceback.format_exc())
+                self.log.warning(f'Using config:{use_config}, no params')
+                sys.exit(1)
+        else:
+            classifier = SVC(kernel=kernel, random_state=random_state)
+        try:
+            classifier.fit(self.X_train, self.y_train)
+        except Exception:
+            self.log.error(traceback.format_exc())
+            sys.exit(1)
+        if predict:
+            y_pred = classifier.predict(self.X_test)
+            print(accuracy_score(self.y_test, y_pred))
+        params = {'kernel': kernel,
+                  'random_state': random_state,
+                  'path': self.svm_path}
+        return self.save_model(classifier, self.svm_path, "SVM", params)
+
+    def knn(self, use_config: bool, n_neighbors=5, metric="minkowski", p=2, predict=False) -> bool:
+        if use_config:
+            try:
+                classifier = KNeighborsClassifier(n_neighbors=self.config.getint(
+                    "KNN", "n_neighbors"), metric=self.config["KNN"]["metric"], p=self.config.getint("KNN", "p"))
+            except KeyError:
+                self.log.error(traceback.format_exc())
+                self.log.warning(f'Using config:{use_config}, no params')
+                sys.exit(1)
+        else:
+            classifier = KNeighborsClassifier(
+                n_neighbors=n_neighbors, metric=metric, p=p)
+        try:
+            classifier.fit(self.X_train, self.y_train)
+        except Exception:
+            self.log.error(traceback.format_exc())
+            sys.exit(1)
+        if predict:
+            y_pred = classifier.predict(self.X_test)
+            print(accuracy_score(self.y_test, y_pred))
+        params = {'n_neighbors': n_neighbors,
+                  'metric': metric,
+                  'p': p,
+                  'path': self.knn_path}
+        return self.save_model(classifier, self.knn_path, "KNN", params)
+
+    def rand_forest(self, n_trees=100, criterion="entropy", predict=False):
         classifier = RandomForestClassifier(n_estimators=n_trees, criterion=criterion)
         try:
             classifier.fit(self.X_train,self.y_train)
-        except  Exception:
+        except Exception:
             self.log.error(traceback.format_exc())
             sys.exit(1)
         if predict:
@@ -84,3 +165,7 @@ if __name__ == '__main__':
     multi_model = MultiModel()
     multi_model.log_reg(predict=True)
     multi_model.rand_forest(predict=True)
+    multi_model.knn(use_config=False, predict=True)
+    multi_model.svm(use_config=False, predict=True)
+    multi_model.tree(predict=True)
+    multi_model.bayes(predict=True)
