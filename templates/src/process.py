@@ -4,7 +4,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import sys
 import traceback
-
 from logger import Logger
 
 TEST_SIZE = 0.2
@@ -17,7 +16,7 @@ class DataMaker():
         logger = Logger(SHOW_LOG)
         self.config = configparser.ConfigParser()
         self.log = logger.get_logger(__name__)
-        self.project_path = os.path.join(os.getcwd(), "../data")
+        self.project_path = os.path.join(os.getcwd(), "data")
         self.data_path = os.path.join(self.project_path, "sonar.all-data.csv")
         self.X_path = os.path.join(self.project_path, "data_X.csv")
         self.y_path = os.path.join(self.project_path, "data_y.csv")
@@ -29,6 +28,7 @@ class DataMaker():
 
     def get_data(self) -> bool:
         dataset = pd.read_csv(self.data_path)
+        dataset = dataset.dropna()
         X = dataset.drop(['Label'], axis=1)
         y = dataset['Label']
         X.to_csv(self.X_path, index=True)
