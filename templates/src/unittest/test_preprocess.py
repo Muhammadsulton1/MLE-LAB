@@ -3,9 +3,8 @@ import os
 import unittest
 import pandas as pd
 import sys
-
-os.path.join(os.getcwd(), "src")
-
+import unittest
+sys.path.insert(1, os.path.join(os.getcwd(), "src"))
 from process import DataMaker
 
 config = configparser.ConfigParser()
