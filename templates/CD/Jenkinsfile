@@ -26,7 +26,7 @@ options {
         stage('Pull image'){
             steps{
                 bat '''
-                        docker pull altairzero/mle-template:latest
+                        docker pull sadikov288/mle-template:latest
                 '''
             }
         }
@@ -34,7 +34,7 @@ options {
         stage('Run container'){
             steps{
                 bat '''
-                        docker run --name mle-template -p 80:5556 -d altairzero/mle-template:latest
+                        docker run --name mle-template -p 80:5556 -d sadikov288/mle-template:latest
                 '''
             }
         }
