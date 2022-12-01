@@ -2,7 +2,7 @@ version: '3.8'
 services:
    web:
        build: .
-       command: bash -c "python src/process.py && python src/train.py && python src/predict.py -m LOG_REG -t func && coverage run src/unittests/test_preprocess.py && coverage run -a src/unittests/test_training.py && coverage report -m"
+       command: bash -c "python src/process.py && python src/train.py && python src/predict.py -m LOG_REG -t func && coverage run src/unittest/test_preprocess.py && coverage run -a src/unittest/test_training.py && coverage report -m"
        ports:
            - 8000:8000
        image: Muhammadsulton1/MLE-LAB:latest
