@@ -1,4 +1,3 @@
-always{
 pipeline {
     agent any
 
@@ -100,5 +99,4 @@ options {
             bat 'chcp 65001 && docker logout'
         }
     }
-}
 }
