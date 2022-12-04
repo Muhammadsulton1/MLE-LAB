@@ -1,3 +1,5 @@
+def branch = readFile('branch').trim()
+if (branch == master) {
 pipeline {
     agent any
 
@@ -99,4 +101,5 @@ options {
             bat 'chcp 65001 && docker logout'
         }
     }
+}
 }
