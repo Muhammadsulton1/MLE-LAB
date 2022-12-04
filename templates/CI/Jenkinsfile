@@ -22,7 +22,7 @@ options {
 
         stage('Checkout repo dir') {
             steps {
-                bat 'chcp 65001 && cd MLE-LAB && cd templates && dir'
+                bat 'chcp 65001 && cd MLE-LAB && dir'
 				}
 			}
 
@@ -39,7 +39,7 @@ options {
             steps {
                 script {
                     try {
-                        bat 'chcp 65001 && cd MLE-LAB && cd templates && docker-compose build'
+                        bat 'chcp 65001 && cd MLE-LAB && docker-compose build'
                         }
 
                     finally {
