@@ -27,6 +27,7 @@ options {
                         '''
 				}
 			}
+	}
 
 //     stages {
 //         stage('Clone github repository') {
