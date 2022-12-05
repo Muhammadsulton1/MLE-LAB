@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDS=credentials('mle-template')
+        DOCKERHUB_CREDS=credentials('mle-template-CI')
         LC_ALL = "en_US.UTF-8"
         LANG    = "en_US.UTF-8"
         LANGUAGE = "en_US.UTF-8"
@@ -16,13 +16,21 @@ options {
         stage('Clone github repository') {
             steps {
                 cleanWs()
-                bat 'chcp 65001 && git clone -b main https://github.com/Muhammadsulton1/MLE-LAB.git'
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        git clone -b main https://github.com/Muhammadsulton1/MLE-LAB.git
+                        '''
 				}
 			}
 
         stage('Checkout repo dir') {
             steps {
-                bat 'chcp 65001 && cd MLE-LAB && cd template && dir'
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        cd MLE-LAB && dir
+                        '''
 				}
 			}
 
@@ -31,7 +39,11 @@ options {
                 //withCredentials([usernamePassword(credentialsId: 'mle-template', passwordVariable: 'DOCKER_REGISTRY_PWD', usernameVariable: 'DOCKER_REGISTRY_USER')]){
                 //bat 'chcp 65001 && echo %DOCKER_REGISTRY_PWD% | docker login -u %DOCKER_REGISTRY_USER% --password-stdin'}
                 //bat 'chcp 65001 && echo %DOCKERHUB_CREDS_PSW% | docker login -u %DOCKERHUB_CREDS_USR% --password-stdin'
-                bat 'chcp 65001 && docker login -u %DOCKERHUB_CREDS_USR% -p %DOCKERHUB_CREDS_PSW%'
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        docker login -u %DOCKERHUB_CREDS_USR% -p %DOCKERHUB_CREDS_PSW%
+                        '''
                 }
             }
 
@@ -39,13 +51,17 @@ options {
             steps {
                 script {
                     try {
-                        bat 'chcp 65001 && cd mle-template && docker-compose build'
+                        bat encoding: 'UTF-8', script:
+                                '''
+                                chcp 65001
+                                cd MLE-LAB && docker-compose build
+                                '''
                         }
 
                     finally {
-                    bat '''
+                    bat encoding: 'UTF-8', script:'''
                         chcp 65001
-                        cd mle-template
+                        cd MLE-LAB
                         docker-compose up -d
                         '''
                         }
@@ -54,16 +70,16 @@ options {
             }
 
         // use for multi containers:
-        //docker exec %containerId% cd app && coverage run src/unittest/test_preprocess.py && coverage run -a src/unittest/test_training.py && coverage report -m
+        //docker exec %containerId% cd app && coverage run src/unittests/test_preprocess.py && coverage run -a src/unittests/test_training.py && coverage report -m
         //use for single container (with auth):
-        //docker run --name mle-template_web_1 cd app && coverage run src/unittest/test_preprocess.py && coverage run -a src/unittest/test_training.py && coverage report -m
+        //docker run --name mle-template_web_1 cd app && coverage run src/unittests/test_preprocess.py && coverage run -a src/unittests/test_training.py && coverage report -m
 
         stage('Checkout container logs') {
             steps {
                 dir("mle-template") {
-                        bat '''
+                        bat encoding: 'UTF-8', script: '''
                             docker-compose up -d
-                            for /f %%i in ('docker ps -qf "name=^mle-template-web-1"') do set containerId=%%i
+                            for /f %%i in ('docker ps -qf "name=^mle-template_web_1"') do set containerId=%%i
                             echo %containerId%
                             IF "%containerId%" == "" (
                                 echo "No container running"
@@ -79,7 +95,7 @@ options {
         stage('Checkout coverage report'){
             steps{
                 dir("mle-template"){
-                    bat '''
+                    bat encoding: 'UTF-8', script: '''
                     docker-compose logs -t --tail 10
                     '''
                 }
@@ -88,14 +104,25 @@ options {
 
         stage('Push'){
             steps{
-                bat 'chcp 65001 && docker push sadikov288/mle-template:latest'
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        docker push sadikov288/mle-template:latest
+                        '''
             }
         }
+
+
 	}
 
     post {
         always {
-            bat 'chcp 65001 && docker logout'
+            echo 'WORKING'
+            bat encoding: 'UTF-8', script:
+                    '''chcp 65001
+                    docker logout
+                    '''
         }
     }
+
 }
