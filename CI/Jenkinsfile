@@ -12,6 +12,21 @@ options {
         timestamps()
         skipDefaultCheckout(true)
 	}
+
+	stages {
+	    stage('Clone github repository') {
+            steps {
+                cleanWs()
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        git clone -b main https://github.com/Muhammadsulton1/MLE-LAB.git
+                        '''
+				}
+			}
+
+	}
+
 //     stages {
 //         stage('Clone github repository') {
 //             steps {
