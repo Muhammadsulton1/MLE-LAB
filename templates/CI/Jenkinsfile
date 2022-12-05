@@ -115,14 +115,14 @@ options {
 
 	}
 
-    post {
-        always {
-            echo 'WORKING'
-            bat encoding: 'UTF-8', script:
-                    '''chcp 65001
-                    docker logout
-                    '''
-        }
-    }
+//     post {
+//         always {
+//             echo 'WORKING'
+//             bat encoding: 'UTF-8', script:
+//                     '''chcp 65001
+//                     docker logout
+//                     '''
+//         }
+//     }
 
 }
