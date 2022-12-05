@@ -97,7 +97,7 @@ options {
 
         stage('Checkout coverage report'){
             steps{
-                dir("mle-template"){
+                dir("MLE-LAB"){
                     bat encoding: 'UTF-8', script: '''
                     docker-compose logs -t --tail 10
                     '''
