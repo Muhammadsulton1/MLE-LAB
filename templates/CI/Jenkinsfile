@@ -29,7 +29,7 @@ options {
                 bat encoding: 'UTF-8', script:
                         '''
                         chcp 65001
-                        cd MLE-LAB && cd templates && dir
+                        cd MLE-LAB && dir
                         '''
 				}
 			}
@@ -54,14 +54,14 @@ options {
                         bat encoding: 'UTF-8', script: 
                                 '''
                                 chcp 65001
-                                cd MLE-LAB && cd templates && docker-compose build
+                                cd MLE-LAB && docker-compose build
                                 '''
                         }
 
                     finally {
                     bat encoding: 'UTF-8', script:'''
                         chcp 65001
-                        cd MLE-LAB && cd templates
+                        cd MLE-LAB
                         docker-compose up -d
                         '''
                         }
