@@ -1,63 +1,32 @@
+
+
 pipeline {
     agent any
-    stages {
-         stage('Validate Fail fast') {
-             failFast true
-             parallel {
-                  stage('stage A') {
-                    steps {
-                        echo 'stage A started'
-                        sleep 5
-                        sh 'false'
-                        echo 'stage A Ended' //will not execute because of above sh return
 
-                    }
-                }
-                stage('stage B') {
-                    steps {
-                        echo 'stage B started'
-                        sleep 10
-                        echo 'stage B Ended' //will not execute because of above stage fail
-                    }
-                }
-                 stage('stage C') {
-                    steps {
-                        echo 'stage C started'
-                        echo 'stage C Ended' //May complete before Stage A fails
-                    }
-                }
-             }
-         }
-         stage('final stage sequential') {
-             steps {
-                 script {
-                     echo "The complete run!"
-                 }
-             }
-         }
-     }
-}
-
-
-
-
-
-// pipeline {
-//     agent any
-//
-//     environment {
+    environment {
 //         DOCKERHUB_CREDS=credentials('mle-template-CI')
-//         LC_ALL = "en_US.UTF-8"
-//         LANG    = "en_US.UTF-8"
-//         LANGUAGE = "en_US.UTF-8"
-//     }
-//
-// options {
-//         timestamps()
-//         skipDefaultCheckout(true)
-// 	}
+        LC_ALL = "en_US.UTF-8"
+        LANG    = "en_US.UTF-8"
+        LANGUAGE = "en_US.UTF-8"
+    }
 
+options {
+        timestamps()
+        skipDefaultCheckout(true)
+	}
 
+    stages {
+        stage('Clone github repository') {
+            steps {
+                cleanWs()
+                bat encoding: 'UTF-8', script:
+                        '''
+                        chcp 65001
+                        echo 'AAAAAAA'
+                        git clone -b main https://github.com/Muhammadsulton1/MLE-LAB.git
+                        '''
+				}
+			}
 
 //     stages {
 //         stage('Clone github repository') {
@@ -172,4 +141,4 @@ pipeline {
 //         }
 //     }
 
-// }
+}
