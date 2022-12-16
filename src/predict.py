@@ -18,7 +18,9 @@ SHOW_LOG = True
 
 
 class Predictor():
-
+    """
+    class for getting predictions for ML model
+    """
     def __init__(self) -> None:
         logger = Logger(SHOW_LOG)
         self.config = configparser.ConfigParser()
@@ -33,7 +35,9 @@ class Predictor():
         self.X_train = sc.fit_transform(self.X_train)
         self.X_test = sc.transform(self.X_test)
         self.log.info("Predictor is ready")
-
+    """
+    fuction for prediction ml model
+    """
     def predict(self, name:str) -> bool:
         try:
             classifier = pickle.load(open(self.config[name]["path"], "rb"))

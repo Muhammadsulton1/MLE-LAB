@@ -11,7 +11,9 @@ SHOW_LOG = True
 
 
 class DataMaker():
-
+    """
+    class for preprocessing data
+    """
     def __init__(self) -> None:
         logger = Logger(SHOW_LOG)
         self.config = configparser.ConfigParser()
@@ -25,7 +27,9 @@ class DataMaker():
         self.test_path = [os.path.join(self.project_path, "Test_data_X.csv"), os.path.join(
             self.project_path, "Test_data_y.csv")]
         self.log.info("DataMaker is ready")
-
+    """
+    function for getting data
+    """
     def get_data(self) -> bool:
         dataset = pd.read_csv(self.data_path)
         dataset = dataset.dropna()
@@ -41,7 +45,9 @@ class DataMaker():
         else:
             self.log.error("X and y data is not ready")
             return False
-
+    """
+    function for splitting data into train and test
+    """
     def split_data(self, test_size=TEST_SIZE) -> bool:
         self.get_data()
         try:
@@ -68,6 +74,9 @@ class DataMaker():
             os.path.isfile(self.test_path[0]) and \
             os.path.isfile(self.test_path[1])
 
+    """
+    function for saving splitted data
+    """
     def save_splitted_data(self, df: pd.DataFrame, path: str) -> bool:
         df = df.reset_index(drop=True)
         df.to_csv(path, index=True)
